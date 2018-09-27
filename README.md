@@ -27,4 +27,14 @@ $ python manage.py runserver
        Make sure they are installed and running in background
 
 
+### Goal
+To understand the working of channels.
+Hence haven't concentrated much on frontend.
 
+
+### TODOs
+
+1. online/offline status
+2. better login UI (just plain html now)
+3. any javascript refactoring if any
+4. communicate with websocket connections via django views.
