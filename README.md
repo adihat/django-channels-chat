@@ -3,6 +3,8 @@ django-channels-chat
 
 Group chat using django channels
 
+![](chat-app.gif)
+
 
 ### Installation
 ```
