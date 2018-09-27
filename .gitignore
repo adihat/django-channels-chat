@@ -101,3 +101,5 @@ ENV/
 .idea/
 /prototype/testing_scripts/
 .DS_Store
+
+db.sqlite3
