@@ -38,4 +38,4 @@ Hence haven't concentrated much on frontend.
 
 1. better login UI (just plain html now)
 2. better frontend code
-3. communicate with websocket connections via django views.
+
