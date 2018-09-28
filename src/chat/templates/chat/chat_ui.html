@@ -996,11 +996,9 @@
                 addUsers(onlineUsers, userName);
             }
         } else {
-            if (userName !== currentUser) {
-                removeUsers(onlineUsers, userName);
-            }
+            removeUsers(onlineUsers, userName);
         }
-
+        console.log('onlineUsers =======>', onlineUsers);
         if (!onlineUsers) {
             document.getElementById("onlineUsers").innerHTML = 'Online users: No users online';
         } else {
