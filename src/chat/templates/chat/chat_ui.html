@@ -938,13 +938,14 @@
     }
 
     function renderTypingUsers(typingUsers) {
-        if (typingUsers.length === 0) {
+        var numberOfTypingUsers = typingUsers.length;
+        if (!numberOfTypingUsers) {
             document.getElementById("typingNotification").innerHTML = '';
-        } else if (typingUsers.length === 1) {
+        } else if (numberOfTypingUsers === 1) {
             document.getElementById("typingNotification").innerHTML = [typingUsers[0], 'is typing'].join(' ');
         } else {
             var earliestTwoUsers = [typingUsers[0], typingUsers[1]].join(', ');
-            var remainingUsers = typingUsers.length - 2;
+            var remainingUsers = numberOfTypingUsers - 2;
             if (remainingUsers > 0) {
                 document.getElementById("typingNotification").innerHTML = [earliestTwoUsers, remainingUsers, ' more typing'].join(' ');
             } else {
@@ -976,6 +977,7 @@
         var userName = data.username;
         var timestamp = data.timestamp;
         var online = data.online;
+        var numberOfOnlineUsers = onlineUsers.length;
         if (online) {
             if (typing) {
                 var outOfFocus = data.outoffocus;
@@ -1004,7 +1006,7 @@
             removeUsers(typingUsers, userName);
         }
         console.log('onlineUsers =======>', onlineUsers);
-        if (!onlineUsers.length) {
+        if (!numberOfOnlineUsers) {
             document.getElementById("onlineUsers").innerHTML = 'Online users: No users online';
         } else {
             document.getElementById("onlineUsers").innerHTML = 'Online users:' + onlineUsers.join(', ');
