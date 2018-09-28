@@ -53,9 +53,10 @@ def logged_in(request):
 
 def send_data_from_server(request):
     channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)('chat_hubbler',
-                                            {'type': 'receive', 'username': 'server', 'outoffocus': True,
-                                             'typing': True, 'timestamp': '10:03 PM'})
+    async_to_sync(channel_layer.group_send)('server_announcements',
+                                            {'type': 'chat.message', 'username': 'server', 'outoffocus': True,
+                                             'typing': True, 'timestamp': '10:03 PM', 'online': True,
+                                             'message': 'hi from server'})
     return JsonResponse({'success': True})
 
 

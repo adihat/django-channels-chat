@@ -22,6 +22,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.channel_layer.group_add('server_announcements', self.channel_name)
         await self.accept()
         chat_data = {'username': self.username, 'online': True, 'type': 'chat_message'}
         await self.channel_layer.group_send(self.room_group_name, chat_data)
@@ -31,6 +32,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # send offline broadcast
         offline_data = {'username': self.username, 'online': False, 'type': 'offline'}
         await self.channel_layer.group_send(self.room_group_name, offline_data)
+        async_to_sync(self.channel_layer.group_discard)('server_events', self.channel_name)
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 

@@ -998,7 +998,7 @@
                     appendChatBubble("receiver", userName, message, timestamp);
                 }
             }
-            if (userName !== currentUser) {
+            if (userName !== currentUser && userName !== "server") {
                 addUsers(onlineUsers, userName);
             }
         } else {
