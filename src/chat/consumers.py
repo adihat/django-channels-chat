@@ -21,7 +21,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.username = self.scope['session'].get('username', 'server')
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
+        # for multicast
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        # for broadcast
         await self.channel_layer.group_add('server_announcements', self.channel_name)
         await self.accept()
         chat_data = {'username': self.username, 'online': True, 'type': 'chat_message'}
@@ -110,3 +112,4 @@ class EventConsumer(JsonWebsocketConsumer):
                 'content': event['content']
             }
         )
+

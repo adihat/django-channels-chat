@@ -54,7 +54,7 @@ def logged_in(request):
 
 def send_data_from_server(request):
     channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)('server_announcements',
+    async_to_sync(channel_layer.group_send)('chat_hubbler',
                                             {'type': 'chat.message', 'username': 'server', 'outoffocus': True,
                                              'typing': True, 'timestamp': '10:03 PM', 'online': True,
                                              'message': 'hi from server'})
