@@ -3,6 +3,8 @@ django-channels-chat
 
 Group chat using django channels
 
+![](chat-app.gif)
+
 
 ### Installation
 ```
@@ -36,5 +38,5 @@ Hence haven't concentrated much on frontend.
 
 1. online/offline status
 2. better login UI (just plain html now)
-3. any javascript refactoring if any
+3. better frontend code
 4. communicate with websocket connections via django views.
