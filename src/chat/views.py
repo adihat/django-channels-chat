@@ -19,7 +19,7 @@ def room(request, room_name):
     if not username:
         return HttpResponseRedirect('/login/')
     filters = {'chat_room': room_name, 'deleted': {'$ne': True}}
-    sort_fields = [('timestamp', 1)]
+    sort_fields = [('timestamp', -1)]
     previous_messages = []
     for chat in MONGO_CLIENT['chat_message']['account_1'].find(filters).sort(sort_fields).limit(20):
         chat['_id'] = str(chat['_id'])
@@ -27,6 +27,7 @@ def room(request, room_name):
         chat['timestamp'] = get_str_from_datetime(indian_timestamp, DATE_TIME_FORMAT)
         chat['message'] = chat['message']['text']
         previous_messages.append(chat)
+    previous_messages = sorted(previous_messages, key=lambda s: s['timestamp'])
     print('previous_messages =======>', previous_messages)
     return render(request, 'chat/chat_ui.html', {
         'room_name': room_name,
