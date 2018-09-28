@@ -899,6 +899,60 @@
     var previous_messages = {{prev_messages}};
     var typingUsers = [];
     var onlineUsers = [];
+
+    function appendChatBubble(type, userName, chatMessage, timestamp) {
+        var initials = userName.slice(0, 2).toUpperCase();
+        var listElement = document.createElement("li");
+        var listHTML = '';
+        if (type === "sender") {
+            listElement.classList += 'sender';
+        } else {
+            listElement.classList += 'receiver';
+        }
+        listHTML += '<span class="profile-pic"> <div class="noPic">' + initials + '</div></span> <div class="chat-details"> <div class="name">' + userName + '</div> <span class="chat-message">' + chatMessage + '</span> <div class="message-time">' + timestamp + '</div></div>';
+        listElement.innerHTML = listHTML;
+        var chatBubbles = document.getElementById("chat-bubbles");
+        chatBubbles.appendChild(listElement);
+    }
+
+    function getTimeStamp() {
+        var time = new Date();
+        var timestamp = time.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+        console.log(timestamp);
+        return timestamp;
+    }
+
+    function removeUsers(array, userName) {
+        var index = array.indexOf(userName);
+        if (index > -1) {
+            array.splice(index, 1);
+        }
+        console.log('removed' + userName);
+    }
+
+    function addUsers(array, userName) {
+        if (!array.includes(userName)) {
+            array.push(userName);
+            console.log('Added' + userName);
+        }
+    }
+
+    function renderTypingUsers(typingUsers) {
+        if (typingUsers.length === 0) {
+            document.getElementById("typingNotification").innerHTML = '';
+        } else if (typingUsers.length === 1) {
+            document.getElementById("typingNotification").innerHTML = [typingUsers[0], 'is typing'].join(' ');
+        } else {
+            var earliestTwoUsers = [typingUsers[0], typingUsers[1]].join(', ');
+            var remainingUsers = typingUsers.length - 2;
+            if (remainingUsers > 0) {
+                document.getElementById("typingNotification").innerHTML = [earliestTwoUsers, remainingUsers, ' more typing'].join(' ');
+            } else {
+                document.getElementById("typingNotification").innerHTML = [earliestTwoUsers, 'are typing'].join(' ');
+            }
+        }
+    }
+
     if (previous_messages) {
         previous_messages.forEach(function (message) {
             var creator = message.user;
@@ -910,43 +964,6 @@
                 appendChatBubble("receiver", creator, chatMessage, timestamp);
             }
         });
-
-        function appendChatBubble(type, userName, chatMessage, timestamp) {
-            var initials = userName.slice(0, 2).toUpperCase();
-            var listElement = document.createElement("li");
-            var listHTML = '';
-            if (type === "sender") {
-                listElement.classList += 'sender';
-            } else {
-                listElement.classList += 'receiver';
-            }
-            listHTML += '<span class="profile-pic"> <div class="noPic">' + initials + '</div></span> <div class="chat-details"> <div class="name">' + userName + '</div> <span class="chat-message">' + chatMessage + '</span> <div class="message-time">' + timestamp + '</div></div>';
-            listElement.innerHTML = listHTML;
-            var chatBubbles = document.getElementById("chat-bubbles");
-            chatBubbles.appendChild(listElement);
-        }
-
-        function getTimeStamp() {
-            var time = new Date();
-            var timestamp = time.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
-            console.log(timestamp);
-            return timestamp;
-        }
-
-        function removeUsers(array, userName) {
-            var index = array.indexOf(userName);
-            if (index > -1) {
-                array.splice(index, 1);
-            }
-            console.log('removed' + userName);
-        }
-
-        function addUsers(array, userName) {
-            if (!array.includes(userName)) {
-                array.push(userName);
-                console.log('Added' + userName);
-            }
-        }
     }
 
     <!-- ########################### web socket operation ########################### -->
@@ -969,20 +986,7 @@
                         addUsers(typingUsers, userName);
                     }
                 }
-
-                if (typingUsers.length === 0) {
-                    document.getElementById("typingNotification").innerHTML = '';
-                } else if (typingUsers.length === 1) {
-                    document.getElementById("typingNotification").innerHTML = [typingUsers[0], 'is typing'].join(' ');
-                } else {
-                    var earliestTwoUsers = [typingUsers[0], typingUsers[1]].join(', ');
-                    var remainingUsers = typingUsers.length - 2;
-                    if (remainingUsers > 0) {
-                        document.getElementById("typingNotification").innerHTML = [earliestTwoUsers, remainingUsers, ' more typing'].join(' ');
-                    } else {
-                        document.getElementById("typingNotification").innerHTML = [earliestTwoUsers, 'are typing'].join(' ');
-                    }
-                }
+                renderTypingUsers(typingUsers);
             }
             if (message) {
                 <!-- add the new message to chat screen -->
@@ -997,6 +1001,7 @@
             }
         } else {
             removeUsers(onlineUsers, userName);
+            removeUsers(typingUsers, userName);
         }
         console.log('onlineUsers =======>', onlineUsers);
         if (!onlineUsers) {
@@ -1004,7 +1009,6 @@
         } else {
             document.getElementById("onlineUsers").innerHTML = 'Online users:' + onlineUsers.join(', ');
         }
-
     };
 
     chatSocket.onclose = function (e) {
