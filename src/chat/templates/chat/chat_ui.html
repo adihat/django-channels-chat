@@ -1004,7 +1004,7 @@
             removeUsers(typingUsers, userName);
         }
         console.log('onlineUsers =======>', onlineUsers);
-        if (!onlineUsers) {
+        if (!onlineUsers.length) {
             document.getElementById("onlineUsers").innerHTML = 'Online users: No users online';
         } else {
             document.getElementById("onlineUsers").innerHTML = 'Online users:' + onlineUsers.join(', ');
