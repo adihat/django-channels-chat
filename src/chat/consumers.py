@@ -32,7 +32,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # send offline broadcast
         offline_data = {'username': self.username, 'online': False, 'type': 'offline'}
         await self.channel_layer.group_send(self.room_group_name, offline_data)
-        async_to_sync(self.channel_layer.group_discard)('server_events', self.channel_name)
+        await self.channel_layer.group_discard('server_announcements', self.channel_name)
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
