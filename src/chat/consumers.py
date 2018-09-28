@@ -18,18 +18,19 @@ def save_to_database(db, collection, chat_message):
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         print('inside ChatConsumer connect()')
-        print('scope =======>', self.scope)
-        print('channel_layer ======>', self.channel_layer)
-        print('channel_name ======>', self.channel_name)
         self.username = self.scope['session'].get('username', 'server')
-        print('username =====>', self.username)
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
+        chat_data = {'username': self.username, 'online': True, 'type': 'chat_message'}
+        await self.channel_layer.group_send(self.room_group_name, chat_data)
 
     async def disconnect(self, close_code):
         print('inside ChatConsumer disconnect()')
+        # send offline broadcast
+        offline_data = {'username': self.username, 'online': False, 'type': 'offline'}
+        await self.channel_layer.group_send(self.room_group_name, offline_data)
         # Leave room group
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
@@ -44,8 +45,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         typing = text_data_json.get('typing') or False
         out_of_focus = text_data_json.get('outoffocus') or False
         timestamp = text_data_json.get('timestamp') or ''
+        online = text_data_json.get('online', True)
         chat_data = {'type': 'chat_message', 'username': username, 'outoffocus': out_of_focus, 'typing': typing,
-                     'timestamp': timestamp}
+                     'timestamp': timestamp, 'online': online}
         message = text_data_json.get('message', '')
         if message:
             chat_data.update({'message': message})
@@ -69,6 +71,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 print('chat saved to db successfully ====>', inserted_id)
             else:
                 print('saving to db failed')
+
+    async def offline(self, event):
+        print('inside offline() ====>', event)
+        await self.send(text_data=json.dumps(event))
 
 
 class EventConsumer(JsonWebsocketConsumer):
